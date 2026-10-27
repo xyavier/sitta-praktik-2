@@ -1,4 +1,4 @@
-# SITTA UT - Sistem Informasi Tiras dan Transaksi Bahan Ajar Universitas Terbuka
+# SITTA UT - Sistem Informasi Tracking dan Transaksi Bahan Ajar Universitas Terbuka
 > **Tugas Praktik 2 - STSI4209 Pemrograman Berbasis Web**  
 > **Pengembangan Antarmuka Reaktif Menggunakan Framework Vue.js**
 
@@ -17,9 +17,9 @@ Aplikasi ini dikembangkan menggunakan **Vue.js (v3 CDN)** sebagai *JavaScript Fr
 ### 1. Halaman Stok Bahan Ajar (`stock.html` & `stock-app.js`)
 * **Daftar Stok Bahan Ajar:** Menampilkan tabel informasi bahan ajar secara rinci meliputi: Kode, Judul, Kategori, UT-Daerah (UPBJJ), Lokasi Rak, Jumlah Stok ($qty$), Safety Stock ($safety$), Status, dan Catatan.
 * **Indikator Status Stok Otomatis:**
-  * 🟢 **Aman**: Ditampilkan jika $qty \ge safety$ (Teks/simbol hijau).
-  * 🟠 **Menipis**: Ditampilkan jika $qty < safety$ dan $qty > 0$ (Teks/simbol oranye/warning).
-  * 🔴 **Kosong**: Ditampilkan jika $qty = 0$ (Teks/simbol merah/danger).
+  * **Aman**: Ditampilkan jika $qty \ge safety$ (Teks/simbol hijau).
+  * **Menipis**: Ditampilkan jika $qty < safety$ dan $qty > 0$ (Teks/simbol oranye/warning).
+  * **Kosong**: Ditampilkan jika $qty = 0$ (Teks/simbol merah/danger).
 * **Filter & Sort Dinamis:**
   * **Dependent Filter:** Pilihan filter 'Kategori Mata Kuliah' bersifat dependen dan baru muncul/menyesuaikan setelah 'UT-Daerah' dipilih.
   * **Re-order Alert Filter:** Filter khusus untuk menampilkan stok yang bernilai $qty < safety$ atau $qty = 0$ guna memberikan pengingat pemesanan ulang bahan ajar.
