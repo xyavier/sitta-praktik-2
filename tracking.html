@@ -51,7 +51,7 @@
             type="text"
             v-model="searchDO"
             placeholder="Masukkan Nomor DO"
-            style="margin: 0; flex: 1"
+            style="margin: 0; flex: 1; text-transform: uppercase"
           />
           <button type="submit" class="animated-button btn-inline btn-lacak">
             <span><i class="fa fa-search"></i> Lacak</span>
@@ -133,25 +133,29 @@
             placeholder="Masukkan Nama Mahasiswa"
           />
 
-          <!-- Ekspedisi -->
+          <!-- Pilih Ekspedisi (JNE Regular / JNE Express dari data) -->
           <label>Ekspedisi:</label>
           <select v-model="newDO.ekspedisi" required>
             <option value="">-- Pilih Ekspedisi --</option>
-            <option v-for="e in ekspedisiList" :key="e.kode" :value="e.nama">
-              {{ e.nama }}
+            <option
+              v-for="e in ekspedisiList"
+              :key="e.kode || e"
+              :value="formatEkspedisiLabel(e)"
+            >
+              {{ formatEkspedisiLabel(e) }}
             </option>
           </select>
 
-          <!-- Paket Bahan Ajar -->
+          <!-- Pilih Paket Bahan Ajar (Menampilkan Kode Paket dan Nama Paket) -->
           <label>Paket Bahan Ajar:</label>
           <select v-model="newDO.paketKode" required>
             <option value="">-- Pilih Paket --</option>
             <option v-for="p in paketList" :key="p.kode" :value="p.kode">
-              {{ formatPaketLabel(p) }}
+              {{ p.kode }} - {{ p.nama }}
             </option>
           </select>
 
-          <!-- Ganti elemen paket-info-box di tracking.html -->
+          <!-- Detail Isi Paket Bahan Ajar (Muncul di Bawah Select Setelah Dipilih) -->
           <div v-if="selectedPaket" class="paket-info-box">
             <b>Detail Isi Paket:</b> {{ selectedPaketDetail }}
           </div>

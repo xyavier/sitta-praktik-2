@@ -49,10 +49,15 @@ const app = createApp({
   },
   watch: {
     searchDO(newVal, oldVal) {
+      const upperVal = newVal.toUpperCase();
+      if (newVal !== upperVal) {
+        this.searchDO = upperVal;
+        return;
+      }
       if (
-        newVal !== oldVal &&
+        upperVal !== oldVal &&
         this.searchResult &&
-        newVal !== this.searchDOKey
+        upperVal !== this.searchDOKey
       ) {
         this.searchResult = null;
       }
@@ -63,6 +68,7 @@ const app = createApp({
       if (!this.newDO.paketKode) return null;
       return this.paketList.find((p) => p.kode === this.newDO.paketKode);
     },
+    // Mengambil rincian modul buku di bawah dropdown select
     selectedPaketDetail() {
       if (!this.selectedPaket) return "";
 
@@ -71,6 +77,7 @@ const app = createApp({
           ? dataBahanAjar.stok
           : [];
 
+      // Jika paket memiliki array 'isi'
       if (this.selectedPaket.isi && Array.isArray(this.selectedPaket.isi)) {
         const detailDaftar = this.selectedPaket.isi.map((kode) => {
           const itemStok = stokList.find((s) => s.kode === kode);
@@ -79,6 +86,7 @@ const app = createApp({
         return detailDaftar.join(", ");
       }
 
+      // Jika paket memiliki properti string 'detail'
       return this.selectedPaket.detail || "-";
     },
     formattedHarga() {
@@ -87,14 +95,16 @@ const app = createApp({
     },
   },
   methods: {
-    formatPaketLabel(p) {
-      if (!p) return "";
-      const isiStr = Array.isArray(p.isi)
-        ? p.isi.join(", ")
-        : p.detail || p.isi || "";
-      return isiStr
-        ? `${p.kode} - ${p.nama} (${isiStr})`
-        : `${p.kode} - ${p.nama}`;
+    formatEkspedisiLabel(e) {
+      let nama = typeof e === "object" ? e.nama : e;
+      if (!nama) return "";
+      if (!nama.toUpperCase().includes("JNE")) {
+        nama = nama
+          .replace(/Reguler/i, "Regular")
+          .replace(/Ekspres/i, "Express");
+        return `JNE ${nama}`;
+      }
+      return nama;
     },
     formatTotal(val) {
       if (typeof val === "number") {
@@ -109,6 +119,13 @@ const app = createApp({
       this.newDO.nomor = `DO${year}-${seq}`;
     },
     tambahDO() {
+      // Ambil jam, menit, dan detik saat ini secara otomatis
+      const now = new Date();
+      const jam = String(now.getHours()).padStart(2, "0");
+      const menit = String(now.getMinutes()).padStart(2, "0");
+      const detik = String(now.getSeconds()).padStart(2, "0");
+      const waktuRealtime = `${this.newDO.tanggalKirim} ${jam}:${menit}:${detik}`;
+
       this.trackingList[this.newDO.nomor] = {
         nomorDO: this.newDO.nomor,
         nama: this.newDO.nama,
@@ -120,7 +137,7 @@ const app = createApp({
         total: this.formattedHarga,
         perjalanan: [
           {
-            waktu: `${this.newDO.tanggalKirim} 08:00:00`,
+            waktu: waktuRealtime,
             keterangan:
               "DO berhasil dibuat dan menunggu diserahkan ke ekspedisi.",
           },
@@ -140,7 +157,7 @@ const app = createApp({
       this.generateNomorDO();
     },
     submitDO() {
-      const query = this.searchDO.trim();
+      const query = this.searchDO.trim().toUpperCase();
       if (!query)
         return Swal.fire({
           icon: "warning",

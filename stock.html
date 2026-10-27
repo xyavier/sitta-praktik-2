@@ -82,13 +82,10 @@
             <option value="harga">Harga Terendah</option>
           </select>
 
-          <label
-            ><input type="checkbox" v-model="filter.reorder" /> Stok
-            Menipis</label
-          >
-          <label
-            ><input type="checkbox" v-model="filter.kosong" /> Tampilkan Kosong</label
-          >
+          <label>
+  <input type="checkbox" v-model="filter.isSafety" /> 
+  Tampilkan Stok Menipis & Kosong
+</label>
 
           <button @click="resetFilter" class="reset-filter-btn">
             <i class="fa fa-refresh" aria-hidden="true"></i> Reset

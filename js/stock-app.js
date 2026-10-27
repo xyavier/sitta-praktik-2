@@ -38,8 +38,7 @@ const app = createApp({
       filter: {
         upbjj: "",
         kategori: "",
-        reorder: false,
-        kosong: false,
+        isSafety: false, // Menggantikan reorder & kosong terpisah
       },
       sortBy: "",
     };
@@ -61,14 +60,13 @@ const app = createApp({
     filteredData() {
       let result = [...this.stok];
 
-      // Filter UPBJJ (Case-Insensitive)
       if (this.filter.upbjj) {
         result = result.filter(
           (i) =>
             (i.upbjj || "").toLowerCase() === this.filter.upbjj.toLowerCase(),
         );
       }
-      // Filter Kategori (Case-Insensitive)
+
       if (this.filter.kategori) {
         result = result.filter(
           (i) =>
@@ -76,11 +74,10 @@ const app = createApp({
             this.filter.kategori.toLowerCase(),
         );
       }
-      if (this.filter.reorder) {
-        result = result.filter((i) => i.qty < i.safety && i.qty > 0);
-      }
-      if (this.filter.kosong) {
-        result = result.filter((i) => i.qty === 0);
+
+      // Filter gabungan: Menampilkan stok menipis (qty <= safety) dan stok kosong (qty = 0)
+      if (this.filter.isSafety) {
+        result = result.filter((i) => i.qty <= i.safety || i.qty === 0);
       }
 
       if (this.sortBy === "judul") {
@@ -96,7 +93,7 @@ const app = createApp({
   },
   methods: {
     resetFilter() {
-      this.filter = { upbjj: "", kategori: "", reorder: false, kosong: false };
+      this.filter = { upbjj: "", kategori: "", isSafety: false };
       this.sortBy = "";
     },
     renderStatus(qty, safety) {
@@ -104,7 +101,7 @@ const app = createApp({
       const s = Number(safety) || 0;
       if (q === 0)
         return `<span style="color:red; font-weight:bold;">Kosong</span>`;
-      if (q < s)
+      if (q <= s)
         return `<span style="color:orange; font-weight:bold;">Menipis</span>`;
       return `<span style="color:green; font-weight:bold;">Aman</span>`;
     },
@@ -155,7 +152,6 @@ const app = createApp({
           return;
         }
 
-        // Pengecekan Duplikasi Kode secara Case-Insensitive
         const isDuplicate = this.stok.some(
           (i) => i.kode.toLowerCase() === form.kode.toLowerCase(),
         );
