@@ -101,7 +101,7 @@ Untuk menguji fitur login pada sistem, gunakan salah satu akun simulasi yang ter
 * **Admin Pusat:**
   * **Email:** `admin@ut.ac.id`
   * **Password:** `admin123`
-* **Petugas UPBJJ (Ceker):**
+* **Petugas UPBJJ (Rina Wulandari):**
   * **Email:** `rina@ut.ac.id`
   * **Password:** `rina123`
 
