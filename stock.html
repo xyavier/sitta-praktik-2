@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Informasi Stok Bahan Ajar</title>
+    <link rel="stylesheet" href="css/style.css" />
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
+    />
+  </head>
+  <body>
+    <nav class="menu">
+      <ul class="nav-links">
+        <li class="logo-li">
+          <a href="dashboard.html" class="logo-link">
+            <img src="img/ut.png.webp" alt="Logo UT" style="max-width: 50px" />
+          </a>
+        </li>
+        <li><a href="stock.html" class="active">Informasi Bahan Ajar</a></li>
+        <li><a href="tracking.html">Tracking Pengiriman</a></li>
+
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle">
+            Laporan <i class="fa fa-caret-down arrow-icon"></i>
+          </a>
+          <div class="dropdown-content">
+            <a href="#" class="not-available"
+              >Monitoring Progress DO Bahan Ajar</a
+            >
+            <a href="#" class="not-available">Rekap Bahan Ajar</a>
+          </div>
+        </li>
+
+        <li><a href="#" class="not-available">Histori Transaksi</a></li>
+      </ul>
+      <a id="logoutBtn" href="#" class="logout-btn">Logout</a>
+    </nav>
+
+    <div
+      id="stockApp"
+      class="container"
+      style="max-width: 95vw; margin-top: 20px"
+    >
+      <h2>Informasi Stok Bahan Ajar</h2>
+
+      <!-- Filter & Sort Container -->
+      <div
+        class="filter-container"
+        style="
+          background: #f4f4f4;
+          padding: 15px;
+          border-radius: 8px;
+          margin-bottom: 20px;
+        "
+      >
+        <div
+          style="display: flex; gap: 15px; flex-wrap: wrap; align-items: center"
+        >
+          <strong>Filter:</strong>
+          <select v-model="filter.upbjj">
+            <option value="">Semua UPBJJ</option>
+            <option v-for="u in upbjjOptions" :key="u" :value="u">
+              {{ u }}
+            </option>
+          </select>
+
+          <select v-model="filter.kategori" :disabled="!filter.upbjj">
+            <option value="">Kategori (Pilih UPBJJ Dulu)</option>
+            <option v-for="k in kategoriOptions" :key="k" :value="k">
+              {{ k }}
+            </option>
+          </select>
+
+          <strong>Sort:</strong>
+          <select v-model="sortBy">
+            <option value="">Urutkan Berdasarkan</option>
+            <option value="judul">Judul (A-Z)</option>
+            <option value="stok">Stok Terkecil</option>
+            <option value="harga">Harga Terendah</option>
+          </select>
+
+          <label
+            ><input type="checkbox" v-model="filter.reorder" /> Stok
+            Menipis</label
+          >
+          <label
+            ><input type="checkbox" v-model="filter.kosong" /> Tampilkan Kosong</label
+          >
+
+          <button @click="resetFilter" class="reset-filter-btn">
+            <i class="fa fa-refresh" aria-hidden="true"></i> Reset
+          </button>
+        </div>
+      </div>
+
+      <button class="animated-button btn-inline" @click="openAddModal">
+        <span><i class="fa fa-plus"></i> Tambah Data</span><span></span>
+      </button>
+
+      <table style="font-size: 13px; margin-top: 15px">
+        <thead>
+          <tr>
+            <th>Kode</th>
+            <th>Judul</th>
+            <th>Harga</th>
+            <th>Kategori</th>
+            <th>UPBJJ</th>
+            <th>Rak</th>
+            <th>Qty</th>
+            <th>Safety</th>
+            <th>Status</th>
+            <th>Catatan</th>
+            <th>Aksi</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Data Bahan Ajar -->
+          <tr v-for="item in filteredData" :key="item.kode">
+            <td>{{ item.kode }}</td>
+            <td>{{ item.judul }}</td>
+            <td>Rp {{ (item.harga || 0).toLocaleString('id-ID') }}</td>
+            <td>{{ item.kategori }}</td>
+            <td>{{ item.upbjj }}</td>
+            <td>{{ item.lokasiRak }}</td>
+            <td>{{ item.qty }}</td>
+            <td>{{ item.safety }}</td>
+            <td v-html="renderStatus(item.qty, item.safety)"></td>
+            <td v-html="item.catatanHTML || '-'"></td>
+            <td>
+              <button @click="editItem(item)" class="edit" title="Edit">
+                <i class="fa fa-pencil"></i>
+              </button>
+              <button @click="deleteItem(item)" class="delete" title="Hapus">
+                <i class="fa fa-trash-o"></i>
+              </button>
+            </td>
+          </tr>
+
+          <!-- Pesan jika data tidak ditemukan -->
+          <tr v-if="filteredData.length === 0">
+            <td colspan="11" style="text-align: center; padding: 20px; color: #777; font-weight: bold;">
+              Tidak ada data
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+   
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="js/data.js"></script>
+    <script src="js/script.js"></script>
+    <script src="https://unpkg.com/vue@3.4.38/dist/vue.global.prod.js"></script>
+    <script src="js/dataBahanAjar.js"></script>
+    <script src="js/stock-app.js"></script>
+</body>
+</html>
+  </body>
+</html>

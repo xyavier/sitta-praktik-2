@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dashboard - SITTA UT</title>
+    <link rel="stylesheet" href="css/style.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  </head>
+
+  <body>
+    <nav class="menu">
+      <ul class="nav-links">
+        <li class="logo-li">
+          <a href="dashboard.html" class="logo-link">
+            <img src="img/ut.png.webp" alt="Logo UT" style="max-width: 50px" />
+          </a>
+        </li>
+        <li><a href="stock.html">Informasi Bahan Ajar</a></li>
+        <li><a href="tracking.html">Tracking Pengiriman</a></li>
+
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle">
+            Laporan <i class="fa fa-caret-down arrow-icon"></i>
+          </a>
+          <div class="dropdown-content">
+            <a href="#" class="not-available"
+              >Monitoring Progress DO Bahan Ajar</a
+            >
+            <a href="#" class="not-available">Rekap Bahan Ajar</a>
+          </div>
+        </li>
+
+        <li><a href="#" class="not-available">Histori Transaksi</a></li>
+      </ul>
+      <a id="logoutBtn" href="#" class="logout-btn">Logout</a>
+    </nav>
+    <div id="greeting"></div>
+
+    <script src="js/script.js"></script>
+  </body>
+</html>

@@ -1,0 +1,234 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tracking & Tambah DO - SITTA UT</title>
+    <link rel="stylesheet" href="css/style.css" />
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
+    />
+  </head>
+  <body>
+    <nav class="menu">
+      <ul class="nav-links">
+        <li class="logo-li">
+          <a href="dashboard.html" class="logo-link">
+            <img src="img/ut.png.webp" alt="Logo UT" style="max-width: 50px" />
+          </a>
+        </li>
+        <li><a href="stock.html">Informasi Bahan Ajar</a></li>
+        <li><a href="tracking.html" class="active">Tracking Pengiriman</a></li>
+
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle">
+            Laporan <i class="fa fa-caret-down arrow-icon"></i>
+          </a>
+          <div class="dropdown-content">
+            <a href="#" class="not-available"
+              >Monitoring Progress DO Bahan Ajar</a
+            >
+            <a href="#" class="not-available">Rekap Bahan Ajar</a>
+          </div>
+        </li>
+
+        <li><a href="#" class="not-available">Histori Transaksi</a></li>
+      </ul>
+      <a id="logoutBtn" href="#" class="logout-btn">Logout</a>
+    </nav>
+
+    <div id="trackingApp" class="tracking-page-container">
+      <!-- Form Pencarian Tracking DO -->
+      <div class="card-box">
+        <h2 style="text-align: center; margin-bottom: 20px">Tracking DO</h2>
+        <form
+          @submit.prevent="submitDO"
+          style="display: flex; gap: 10px; align-items: center"
+        >
+          <input
+            type="text"
+            v-model="searchDO"
+            placeholder="Masukkan Nomor DO"
+            style="margin: 0; flex: 1"
+          />
+          <button type="submit" class="animated-button btn-inline btn-lacak">
+            <span><i class="fa fa-search"></i> Lacak</span>
+            <span></span>
+          </button>
+        </form>
+      </div>
+
+      <!-- HASIL TRACKING -->
+      <div v-if="searchResult" class="card-box tracking-result-card">
+        <div class="info-card">
+          <div class="info-left">
+            <p class="nama">{{ searchResult.nama }}</p>
+            <p class="no-do">No. DO: {{ searchDOKey }}</p>
+            <p class="status-badge">Status: {{ searchResult.status }}</p>
+            <br />
+            <p class="ekspedisi">
+              Ekspedisi: <b>{{ searchResult.ekspedisi }}</b>
+            </p>
+          </div>
+          <div class="info-right">
+            <p class="tgl-kirim">
+              Tanggal Kirim: <br /><b>{{ searchResult.tanggalKirim }}</b>
+            </p>
+            <p class="kode-paket">
+              Kode Paket: <br /><b>{{ searchResult.paket }}</b>
+            </p>
+            <p class="total">
+              Total Pembayaran: <br /><b
+                >{{ formatTotal(searchResult.total) }}</b
+              >
+            </p>
+          </div>
+        </div>
+
+        <div class="timeline-container">
+          <h3>Perjalanan Paket</h3>
+          <ul class="timeline-list">
+            <li
+              v-for="(p, index) in searchResult.perjalanan"
+              :key="index"
+              class="timeline-item"
+            >
+              <div class="timeline-circle"></div>
+              <div class="timeline-content">
+                <span class="waktu">{{ p.waktu }}</span>
+                <p class="keterangan">{{ p.keterangan }}</p>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Buat DO Baru -->
+      <div class="card-box">
+        <h3 style="margin-bottom: 15px">Buat Delivery Order (DO) Baru</h3>
+        <form @submit.prevent="tambahDO">
+          <label>Nomor DO (Otomatis):</label>
+          <input
+            type="text"
+            v-model="newDO.nomor"
+            readonly
+            class="input-readonly"
+          />
+
+          <label>NIM:</label>
+          <input
+            type="text"
+            v-model="newDO.nim"
+            required
+            placeholder="Masukkan NIM"
+          />
+
+          <label>Nama Mahasiswa:</label>
+          <input
+            type="text"
+            v-model="newDO.nama"
+            required
+            placeholder="Masukkan Nama Mahasiswa"
+          />
+
+          <!-- Ekspedisi -->
+          <label>Ekspedisi:</label>
+          <select v-model="newDO.ekspedisi" required>
+            <option value="">-- Pilih Ekspedisi --</option>
+            <option v-for="e in ekspedisiList" :key="e.kode" :value="e.nama">
+              {{ e.nama }}
+            </option>
+          </select>
+
+          <!-- Paket Bahan Ajar -->
+          <label>Paket Bahan Ajar:</label>
+          <select v-model="newDO.paketKode" required>
+            <option value="">-- Pilih Paket --</option>
+            <option v-for="p in paketList" :key="p.kode" :value="p.kode">
+              {{ formatPaketLabel(p) }}
+            </option>
+          </select>
+
+          <!-- Ganti elemen paket-info-box di tracking.html -->
+          <div v-if="selectedPaket" class="paket-info-box">
+            <b>Detail Isi Paket:</b> {{ selectedPaketDetail }}
+          </div>
+
+          <label>Tanggal Kirim (Local Time):</label>
+          <input type="date" v-model="newDO.tanggalKirim" required />
+
+          <label>Total Harga:</label>
+          <input
+            type="text"
+            :value="formattedHarga"
+            readonly
+            class="input-readonly font-bold"
+          />
+
+          <button type="submit" class="animated-button btn-full">
+            <span>Simpan DO</span>
+            <span></span>
+          </button>
+        </form>
+      </div>
+
+      <!-- Daftar Tracking DO -->
+      <div class="card-box">
+        <h3 style="margin-bottom: 15px">Daftar Tracking DO</h3>
+        <div style="overflow-x: auto">
+          <table style="font-size: 13px; margin-top: 10px">
+            <thead>
+              <tr>
+                <th>No. DO</th>
+                <th>Nama Mahasiswa</th>
+                <th>Ekspedisi</th>
+                <th>Paket</th>
+                <th>Tgl Kirim</th>
+                <th>Status</th>
+                <th>Aksi</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="(item, key) in trackingList" :key="key">
+                <td style="font-weight: bold">{{ key }}</td>
+                <td>{{ item.nama }}</td>
+                <td>{{ item.ekspedisi }}</td>
+                <td>{{ item.paket }}</td>
+                <td>{{ item.tanggalKirim }}</td>
+                <td>
+                  <span
+                    :style="{ color: item.status === 'Selesai Antar' || item.status === 'Dikirim' ? 'green' : 'orange', fontWeight: 'bold' }"
+                  >
+                    {{ item.status }}
+                  </span>
+                </td>
+                <td>
+                  <button
+                    @click="lacakLangsung(key)"
+                    class="edit"
+                    style="
+                      background-color: #1b6dc1;
+                      padding: 4px 10px;
+                      font-size: 12px;
+                    "
+                    title="Lihat Status"
+                  >
+                    <i class="fa fa-eye"></i> Detail
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <script src="js/script.js"></script>
+    <script src="https://unpkg.com/vue@3.4.38/dist/vue.global.prod.js"></script>
+    <script src="js/data.js"></script>
+    <script src="js/dataBahanAjar.js"></script>
+    <script src="js/tracking-app.js"></script>
+  </body>
+</html>
